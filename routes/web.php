@@ -10,3 +10,7 @@ Route::get('/', function () {
 Route::get('/send', function (){
     Mail::to('arwanmangidi@gmail.com')->send(new \App\Mail\SendWelcomeMail());
 });
+
+Route::get('/rupiah/{number}', function ($number){
+    return formatRupiah($number);
+});
