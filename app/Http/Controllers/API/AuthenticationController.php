@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\ResponseFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,9 +18,9 @@ class AuthenticationController extends Controller
         $user = User::where('email', $email)->first();
 
         if(is_null($user)){
-            return response()->json([
-                'message' => 'User not found'
-            ], 404);
+            return ResponseFormatter::error(404, null, [
+                'User not found'
+            ]);
         }
 
 
@@ -29,15 +30,18 @@ class AuthenticationController extends Controller
 
             $token = $user->createToken(config('app.name'))->plainTextToken;
 
-            return response()->json([
-                'message' => 'Login successful',
+            $data = [
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
+            ];
+
+            return ResponseFormatter::success($data, [
+                'Authenticated'
             ]);
         }
 
-        return response()->json([
-            'message' => 'Invalid credentials'
-        ], 401);
+        return ResponseFormatter::error(401, null, [
+            'Invalid credentials'
+        ]);
     }
 }
